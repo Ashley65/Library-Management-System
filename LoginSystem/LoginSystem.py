@@ -1,63 +1,78 @@
-from tkinter import *
-from tkinter import messagebox
+import tkinter as tk
 import sqlite3
+import hashlib
+from tkinter import *
+import tkinter.messagebox as messagebox
+
+conn = sqlite3.connect('LoginSystem.db')
+c = conn.cursor()
 
 
+class Login(tk.Frame):
 
-class LoginSystem:
     def __init__(self, master):
-            self.master = master
-            self.master.title("Login System")
-            self.master.geometry("400x400")
-            self.master.resizable(False, False)
 
-            self.frame = Frame(self.master)
-            self.frame.pack()
+        self.master = master
+        self.master.title("login page")
+        self.master.geometry("400x400")
+        self.master.resizable(False, False)
 
-            self.username = StringVar()
-            self.password = StringVar()
+        # create a frame for the widgets
+        self.frame = Frame(self.master)
+        self.frame.pack()
 
-            self.label_username = Label(self.frame, text="Username")
-            self.label_username.grid(row=0, column=0, padx=10, pady=10)
+        # create a label for the username
+        self.username_label = Label(self.frame, text="Username")
+        self.username_label.grid(row=0, column=0, sticky=E)
 
-            self.entry_username = Entry(self.frame, textvariable=self.username)
-            self.entry_username.grid(row=0, column=1, padx=10, pady=10)
+        # create a label for the password
+        self.password_label = Label(self.frame, text="Password")
+        self.password_label.grid(row=1, column=0, sticky=E)
 
-            self.label_password = Label(self.frame, text="Password")
-            self.label_password.grid(row=1, column=0, padx=10, pady=10)
+        # create a entry for the username
+        self.username_entry = Entry(self.frame)
+        self.username_entry.grid(row=0, column=1)
 
-            self.entry_password = Entry(self.frame, textvariable=self.password, show="*")
-            self.entry_password.grid(row=1, column=1, padx=10, pady=10)
+        # create a entry for the password
+        self.password_entry = Entry(self.frame, show="*")
+        self.password_entry.grid(row=1, column=1)
 
-            self.button_login = Button(self.frame, text="Login", command=self.login)
-            self.button_login.grid(row=2, column=0, padx=10, pady=10)
+        # create a button to login
+        self.login_button = Button(self.frame, text="Login", command=self.login)
+        self.login_button.grid(row=2, column=0)
 
-            self.button_register = Button(self.frame, text="Register", command=self.register)
-            self.button_register.grid(row=2, column=1, padx=10, pady=10)
+        # create a button to register
+        self.register_button = Button(self.frame, text="Register", command=lambda: self.master.switch_frame(register))
+        self.register_button.grid(row=2, column=1)
 
     def login(self):
-        conn = sqlite3.connect("LoginSystem.db")
-        c = conn.cursor()
-        c.execute("SELECT * FROM users WHERE username = ? AND password = ?", (self.username.get(), self.password.get()))
-        if c.fetchone() is not None:
+        # get the username and password
+        username = self.username_entry.get()
+        password = self.password_entry.get()
+
+        # check if the username and password are correct
+        c.execute("SELECT * FROM LoginSystem WHERE username = ? AND password = ?", (username, password))
+        if c.fetchall():
             messagebox.showinfo("Login", "Login Successful")
         else:
             messagebox.showerror("Login", "Login Failed")
-        conn.close()
-
-    def register(self):
-        conn = sqlite3.connect("database.db")
-        c = conn.cursor()
-        c.execute("INSERT INTO users VALUES (?, ?)", (self.username.get(), self.password.get()))
-        conn.commit()
-        conn.close()
-        messagebox.showinfo("Register", "Registration Successful")
 
 
 
 
+class register(tk.Frame):
+    def __init__(self, master):
+        self.master = master
+        self.master.title("Register page")
+        self.master.geometry("400x400")
+        self.master.resizable(False, False)
+
+        # create a frame for the widgets
+        self.frame = Frame(self.master)
+        self.frame.pack()
 
 
-root = Tk()
-login_system = LoginSystem(root)
-root.mainloop()
+if __name__ == "__main__":
+    root = tk.Tk()
+    app = Login(root)
+    root.mainloop()
