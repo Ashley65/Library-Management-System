@@ -1,130 +1,150 @@
 import tkinter as tk
 import sqlite3
 import hashlib
-from tkinter import *
 import tkinter.messagebox as messagebox
+import random
 
 conn = sqlite3.connect('LoginSystem.db')
 c = conn.cursor()
 
 
-class Login(tk.Frame):
+class container(tk.Tk):
 
-    def __init__(self, master):
+    # initialise the function for class app
+    def __init__(self, *args, **kwargs):
+        tk.Tk.__init__(self, *args, **kwargs)
+        container = tk.Frame(self)
+        container.pack(side="top", fill="both", expand=True)
+        container.grid_rowconfigure(0, weight=1)
+        container.grid_columnconfigure(0, weight=1)
 
-        # __init__ function for class Tk
-        tk.Frame.__init__(self, master)
-        self.master = master
-        self.initialseInterfaceL()
+        self.frames = {}
+        for F in (LoginPage, RegisterPage):
+            frame = F(container, self)
+            self.frames[F.__name__] = frame
+            frame.grid(row=0, column=0, sticky="nsew")
 
-    def initialseInterfaceL(self):
+        self.switch_frame("LoginPage")
 
-        # set the title of the window
-        self.master.geometry("400x400")
-        self.master.title("Login Page")
-        self.master.resizable(False, False)
+    # switch frame function
+    def switch_frame(self, name):
+        frame = self.frames[name]
+        frame.tkraise()
 
-        # create a frame
-        self.frame = tk.Frame(self.master)
-        self.frame.pack()
 
-        # create a label for the username
-        self.usernameLabel = tk.Label(self.frame, text="Username")
-        self.usernameLabel.grid(row=0, column=0, sticky=tk.W)
+class LoginPage(tk.Frame):
 
-        # create a label for the password
-        self.passwordLabel = tk.Label(self.frame, text="Password")
-        self.passwordLabel.grid(row=1, column=0, sticky=tk.W)
+    def __init__(self, parent, controller):
+        tk.Frame.__init__(self, parent)
+        self.login = None
+        self.controller = controller
+        self.label = tk.Label(self, text="Login Page", font=("Arial", 20))
+        self.label.pack(pady=10, padx=10)
 
-        # create a entry for the username
-        self.usernameEntry = tk.Entry(self.frame)
-        self.usernameEntry.grid(row=0, column=1)
+        self.username = tk.Label(self, text="Username")
+        self.username.pack()
+        self.username_entry = tk.Entry(self)
+        self.username_entry.pack()
 
-        # create a entry for the password
-        self.passwordEntry = tk.Entry(self.frame, show="*")
-        self.passwordEntry.grid(row=1, column=1)
+        self.password = tk.Label(self, text="Password")
+        self.password.pack()
+        self.password_entry = tk.Entry(self, show="*")
+        self.password_entry.pack()
 
-        # create a button to login
-        self.loginButton = tk.Button(self.frame, text="Login", command=self.login)
-        self.loginButton.grid(row=2, column=0)
+        # login button
+        self.login_button = tk.Button(self, text="Login", command=self.login)
+        self.login_button.pack()
 
-        # create a button to register
-        self.registerButton = tk.Button(self.frame, text="Register", command=lambda: self.switch_frame(Register))
-        self.registerButton.grid(row=2, column=1)
+        # register button
+        self.register_button = tk.Button(self, text="Register", command=lambda: controller.switch_frame("RegisterPage"))
+        self.register_button.pack()
 
-    def login(self):
-        # get the username and password
-        username = self.usernameEntry.get()
-        password = self.passwordEntry.get()
-
-        # check if the username and password are correct
-        if username == "" or password == "":
-            messagebox.showerror("Error", "Please enter username and password")
-        else:
-            # hash the password
-            password = hashlib.sha256(password.encode()).hexdigest()
+        # login function
+        def login(self):
+            # get the username and password
+            username = self.usernameEntry.get()
+            password = self.passwordEntry.get()
 
             # check if the username and password are correct
-            c.execute("SELECT * FROM LoginSystem WHERE username = ? AND password = ?", (username, password))
-            if c.fetchone() is not None:
-                messagebox.showinfo("Success", "Login successful")
+            if username == "" or password == "":
+                messagebox.showerror("Error", "Please enter username and password")
             else:
-                messagebox.showerror("Error", "Incorrect username or password")
+                # hash the password
+                password = hashlib.sha256(password.encode()).hexdigest()
 
-    def switch_frame(self, frame_class):
-        new_frame = frame_class(self.master)
-        self.master.switch_frame(new_frame)
-
-
-
-
-class Register(tk.Frame):
-
-    def __init__(self, master):
-        tk.Frame.__init__(self, master)
-        self.master = master
-        self.initialseInterface()
-
-    def initialseInterface(self):
-        # set the title of the window
-        self.master.geometry("400x400")
-        self.master.title("Register Page")
-        self.master.resizable(False, False)
-
-        # create a frame
-        self.frame = tk.Frame(self.master)
-        self.frame.pack()
-
-        # create a label for the username
-        self.usernameLabel = tk.Label(self.frame, text="Username")
-        self.usernameLabel.grid(row=0, column=0, sticky=tk.W)
-
-        # create a label for the password
-        self.passwordLabel = tk.Label(self.frame, text="Password")
-        self.passwordLabel.grid(row=1, column=0, sticky=tk.W)
-
-        # create a entry for the username
-        self.usernameEntry = tk.Entry(self.frame)
-        self.usernameEntry.grid(row=0, column=1)
-
-        # create a entry for the password
-        self.passwordEntry = tk.Entry(self.frame, show="*")
-        self.passwordEntry.grid(row=1, column=1)
-
-        # create a button to login
-        self.registerButton = tk.Button(self.frame, text="Register", command=self.register)
-        self.registerButton.grid(row=2, column=0)
-
-        # create a button to register
-        self.loginButton = tk.Button(self.frame, text="Login", command=lambda: self.switch_frame(Login))
-        self.loginButton.grid(row=2, column=1)
+                # check if the username and password are correct
+                c.execute("SELECT * FROM LoginSystem WHERE username = ? AND password = ?", (username, password))
+                if c.fetchone() is not None:
+                    messagebox.showinfo("Success", "Login successful")
+                else:
+                    messagebox.showerror("Error", "Incorrect username or password")
 
 
-# create the root windo
-root = tk.Tk()
+class RegisterPage(tk.Frame):
 
-# create the main window
-app = Login(root)
+    # initialise the function for class app
+    def __init__(self, parent, controller):
+        tk.Frame.__init__(self, parent)
+        self.register = None
+        self.controller = controller
+        self.label = tk.Label(self, text="Register Page", font=("Arial", 20))
+        self.label.pack(pady=10, padx=10)
 
-# start the program
-root.mainloop()
+        self.username = tk.Label(self, text="Username")
+        self.username.pack()
+        self.username_entry = tk.Entry(self)
+        self.username_entry.pack()
+
+        self.password = tk.Label(self, text="Password")
+        self.password.pack()
+        self.password_entry = tk.Entry(self, show="*")
+        self.password_entry.pack()
+
+        self.email = tk.Label(self, text="Email")
+        self.email.pack()
+        self.email_entry = tk.Entry(self)
+        self.email_entry.pack()
+
+        self.phone = tk.Label(self, text="Phone")
+        self.phone.pack()
+        self.phone_entry = tk.Entry(self)
+        self.phone_entry.pack()
+
+        # register button
+        self.register_button = tk.Button(self, text="Register", command=self.register)
+        self.register_button.pack()
+
+        # back button
+        self.back_button = tk.Button(self, text="Back", command=lambda: controller.switch_frame("LoginPage"))
+        self.back_button.pack()
+
+        # register function
+        def register(self):
+
+            # get the username, password, email and phone
+            username = self.usernameEntry.get()
+            password = self.passwordEntry.get()
+            email = self.emailEntry.get()
+            phone = self.phoneEntry.get()
+
+            # check if the username, password, email and phone are correct
+            if username == "" or password == "" or email == "" or phone == "":
+                messagebox.showerror("Error", "Please enter username, password, email or phone")
+
+            else:
+                # hash the password
+                password = hashlib.sha256(password.encode()).hexdigest()
+
+                # Randomise the ID number
+                ID = random.randint(1, 1000000000)
+
+                # insert the username, password, email and phone into the database
+                c.execute("INSERT INTO LoginSystem (username, password, email, phone, ID) VALUES (?, ?, ?, ?)",
+                          (username, password, email, phone, ID))
+                conn.commit()
+                messagebox.showinfo("Success", "Register successful")
+
+
+if __name__ == "__main__":
+    app = container()
+    app.mainloop()
