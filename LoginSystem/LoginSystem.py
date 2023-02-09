@@ -17,6 +17,11 @@ class container(tk.Tk):
         container.pack(side="top", fill="both", expand=True)
         container.grid_rowconfigure(0, weight=1)
         container.grid_columnconfigure(0, weight=1)
+        self.title("Login System")
+        self.geometry("500x500")
+
+
+        
 
         self.frames = {}
         for F in (LoginPage, RegisterPage):
@@ -41,10 +46,12 @@ class LoginPage(tk.Frame):
         self.label = tk.Label(self, text="Login Page", font=("Arial", 20))
         self.label.pack(pady=10, padx=10)
 
+        # username label and entry
         self.username = tk.Label(self, text="Username")
         self.username.pack()
         self.username_entry = tk.Entry(self)
         self.username_entry.pack()
+
 
         self.password = tk.Label(self, text="Password")
         self.password.pack()
