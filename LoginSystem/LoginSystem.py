@@ -20,9 +20,6 @@ class container(tk.Tk):
         self.title("Login System")
         self.geometry("500x500")
 
-
-        
-
         self.frames = {}
         for F in (LoginPage, RegisterPage):
             frame = F(container, self)
@@ -51,7 +48,6 @@ class LoginPage(tk.Frame):
         self.username.pack()
         self.username_entry = tk.Entry(self)
         self.username_entry.pack()
-
 
         self.password = tk.Label(self, text="Password")
         self.password.pack()
@@ -135,7 +131,7 @@ class RegisterPage(tk.Frame):
             phone = self.phoneEntry.get()
 
             # check if the username, password, email and phone are correct
-            if username == "" or password == "" or email == "" or phone == "":
+            if username == "" or password == "" or email == "":
                 messagebox.showerror("Error", "Please enter username, password, email or phone")
 
             else:
@@ -150,6 +146,12 @@ class RegisterPage(tk.Frame):
                           (username, password, email, phone, ID))
                 conn.commit()
                 messagebox.showinfo("Success", "Register successful")
+
+                # clear the username, password, email and phone entry
+                self.usernameEntry.delete(0, "end")
+                self.passwordEntry.delete(0, "end")
+                self.emailEntry.delete(0, "end")
+                self.phoneEntry.delete(0, "end")
 
 
 if __name__ == "__main__":

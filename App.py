@@ -26,5 +26,8 @@ class container(tk.Tk):
     def switch_frame(self, name):
         frame = self.frames[name]
         frame.tkraise()
-        
 
+
+if __name__ == "__main__":
+    app = container()
+    app.mainloop()
