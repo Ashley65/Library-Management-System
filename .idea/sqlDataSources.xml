@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DdlMappings">
+    <mapping uuid="8a53b925-eff2-49af-b3b8-62b299076e53" name="books Mapping">
+      <data-sources db="ceef598c-b9a5-449f-8c35-2b481f1e6150" ddl="ca97426d-3b4f-4e57-8ff6-271bbe727190" />
+      <scope>
+        <node kind="database" negative="1" />
+      </scope>
+    </mapping>
+  </component>
+</project>

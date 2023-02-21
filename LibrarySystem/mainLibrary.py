@@ -17,7 +17,7 @@ label = Label(window, text="Library System", font=("Arial", 20))
 label.pack(pady=10, padx=10)
 
 # create a button to add books
-add_button = Button(window, text="Add Books", command=None)
+add_button = Button(window, text="Add Books", command=lambda: add_book()
 add_button.pack(pady=10, padx=10)
 
 # create a button to view books
